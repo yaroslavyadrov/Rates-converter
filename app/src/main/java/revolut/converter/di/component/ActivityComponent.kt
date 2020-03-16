@@ -1,7 +1,7 @@
 package revolut.converter.di.component
 
 import dagger.Subcomponent
-import revolut.converter.presentation.rates.RatesActivity
+import revolut.converter.presentation.ui.rates.RatesActivity
 
 @Subcomponent
 interface ActivityComponent {

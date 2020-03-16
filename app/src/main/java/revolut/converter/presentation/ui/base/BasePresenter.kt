@@ -1,4 +1,4 @@
-package revolut.converter.presentation.base
+package revolut.converter.presentation.ui.base
 
 import io.reactivex.disposables.CompositeDisposable
 

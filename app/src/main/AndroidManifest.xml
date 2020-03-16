@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:name=".RatesApp"
         android:theme="@style/AppTheme">
-        <activity android:name=".presentation.rates.RatesActivity">
+        <activity android:name="revolut.converter.presentation.ui.rates.RatesActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

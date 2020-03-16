@@ -8,7 +8,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import revolut.converter.data.model.Rate
+import revolut.converter.data.remote.model.Currency
 import revolut.converter.data.remote.RatesApi
 import revolut.converter.data.remote.deserializer.RateDeserializer
 import javax.inject.Singleton
@@ -27,7 +27,7 @@ open class NetworkModule {
     @Provides
     @Singleton
     fun provideGson(rateDeserializer: RateDeserializer): Gson = GsonBuilder()
-            .registerTypeAdapter(Rate::class.java, rateDeserializer)
+            .registerTypeAdapter(Currency::class.java, rateDeserializer)
             .create()
 
     @Provides
