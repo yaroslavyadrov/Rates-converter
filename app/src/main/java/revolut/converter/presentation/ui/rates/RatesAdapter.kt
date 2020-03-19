@@ -14,9 +14,8 @@ import revolut.converter.presentation.model.RateItem
 import revolut.converter.util.bindView
 import javax.inject.Inject
 
-
 class RatesAdapter @Inject constructor(ratesItemDiffCallback: RatesItemDiffCallback) :
-    ListAdapter<RateItem, RatesAdapter.ViewHolder>(ratesItemDiffCallback) {
+        ListAdapter<RateItem, RatesAdapter.ViewHolder>(ratesItemDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_rate, parent, false)
@@ -24,8 +23,7 @@ class RatesAdapter @Inject constructor(ratesItemDiffCallback: RatesItemDiffCallb
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) =
-        holder.bind(getItem(position))
-
+            holder.bind(getItem(position))
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -35,10 +33,10 @@ class RatesAdapter @Inject constructor(ratesItemDiffCallback: RatesItemDiffCallb
         private val currencyAmount by bindView<EditText>(R.id.currencyAmount)
 
         fun bind(rateItem: RateItem) {
-
+            currencyCode.text = rateItem.currencyCode
+            currencyAmount.setText(rateItem.amount.toString())
         }
     }
-
 }
 
 class RatesItemDiffCallback @Inject constructor() : DiffUtil.ItemCallback<RateItem>() {

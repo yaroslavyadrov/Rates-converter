@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import revolut.converter.RatesApp
 import revolut.converter.di.component.ActivityComponent
 
-
 abstract class BaseActivity : AppCompatActivity() {
 
     var activityComponent: ActivityComponent? = null
@@ -20,5 +19,4 @@ abstract class BaseActivity : AppCompatActivity() {
         activityComponent = null
         super.onDestroy()
     }
-
 }
