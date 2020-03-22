@@ -1,6 +1,6 @@
 package revolut.converter.domain.model
 
-data class Rate(
+data class RateDomain(
         val currencyCode: String,
-        val amount: Float
+        val rate: Double
 )

@@ -34,14 +34,14 @@ class RatesAdapter @Inject constructor(ratesItemDiffCallback: RatesItemDiffCallb
 
         fun bind(rateItem: RateItem) {
             currencyCode.text = rateItem.currencyCode
-            currencyAmount.setText(rateItem.amount.toString())
+            currencyAmount.setText(rateItem.amount)
         }
     }
 }
 
 class RatesItemDiffCallback @Inject constructor() : DiffUtil.ItemCallback<RateItem>() {
     override fun areItemsTheSame(oldItem: RateItem, newItem: RateItem): Boolean {
-        return oldItem == newItem
+        return oldItem.currencyCode == newItem.currencyCode
     }
 
     override fun areContentsTheSame(oldItem: RateItem, newItem: RateItem): Boolean {

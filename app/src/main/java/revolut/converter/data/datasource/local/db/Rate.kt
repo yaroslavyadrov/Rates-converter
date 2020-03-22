@@ -10,7 +10,7 @@ data class Rate(
         @ColumnInfo(name = "currency_code")
         val currencyCode: String,
         @ColumnInfo(name = "rate")
-        val rate: Float,
+        val rate: Double,
         @ColumnInfo(name = "position_in_list")
         val positionInList: Int = -1
 )

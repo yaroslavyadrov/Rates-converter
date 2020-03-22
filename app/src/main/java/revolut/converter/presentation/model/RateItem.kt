@@ -6,5 +6,5 @@ data class RateItem(
         @DrawableRes val flagId: Int,
         val currencyCode: String,
         val currencyName: String,
-        val amount: Float
+        val amount: String
 )

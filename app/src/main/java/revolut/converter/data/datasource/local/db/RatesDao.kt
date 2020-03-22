@@ -7,12 +7,12 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import io.reactivex.Completable
-import io.reactivex.Flowable
+import io.reactivex.Single
 
 @Dao
 interface RatesDao {
     @Query("SELECT * FROM rates")
-    fun getRates(): Flowable<List<Rate>>
+    fun getRates(): Single<List<Rate>>
 
     @Query("UPDATE rates SET position_in_list = :position WHERE currency_code = :currencyCode")
     fun updatePosition(currencyCode: String, position: Int): Completable
@@ -20,7 +20,7 @@ interface RatesDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(rates: List<Rate>): List<Long>
 
-    @Update(onConflict = OnConflictStrategy.REPLACE, entity = RateUpdate::class)
+    @Update(onConflict = OnConflictStrategy.REPLACE, entity = Rate::class)
     fun update(rate: RateUpdate)
 
     @Transaction
