@@ -2,8 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rateItemLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground">
 
     <ImageView
         android:id="@+id/currencyFlag"
@@ -36,10 +38,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:lineSpacingExtra="4sp"
         android:layout_marginBottom="16dp"
+        android:lineSpacingExtra="4sp"
         android:textAppearance="@style/currencyName"
-        android:translationY="-1.8sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/currencyFlag"
         app:layout_constraintTop_toBottomOf="@+id/currencyCode"
@@ -49,12 +50,15 @@
         android:id="@+id/currencyAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:imeOptions="actionDone"
         android:layout_alignParentTop="true"
         android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/gray"
+        android:inputType="numberDecimal"
+        android:focusableInTouchMode="true"
         android:textAppearance="@style/amount"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:inputType="numberDecimal"
         tools:text="123123.12" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,54 +15,57 @@ import java.net.UnknownHostException
 import javax.inject.Inject
 
 class RatesRepository @Inject constructor(
-        private val api: RatesApi,
-        private val ratesLocalDataSource: RatesDao,
-        private val preferences: PreferencesHelper
+    private val api: RatesApi,
+    private val ratesLocalDataSource: RatesDao,
+    private val preferences: PreferencesHelper
 ) {
 
     fun getRates(currencyCode: String): Single<List<RateDomain>> {
         return Single.zip(
-                        getRatesFromDb(),
-                        getRatesFromApi(currencyCode),
-                        BiFunction<List<Rate>, List<Rate>, List<Rate>> { fromDb, fromApi ->
-                            fromApi.map { apiRate ->
-                                val position = fromDb.find {
-                                    it.currencyCode == apiRate.currencyCode
-                                }?.positionInList ?: -1
-                                apiRate.copy(positionInList = position)
-                            }
-                        }
-                )
-                .subscribeOn(Schedulers.io())
-                .onErrorResumeNext {
-                    when (it) {
-                        is SocketTimeoutException -> getRatesFromDb()
-                        is UnknownHostException -> getRatesFromDb()
-                        is HttpException -> getRatesFromDb()
-                        else -> Single.error(it)
+                getRatesFromDb(),
+                getRatesFromApi(currencyCode),
+                BiFunction<List<Rate>, List<Rate>, List<Rate>> { fromDb, fromApi ->
+                    fromApi.map { apiRate ->
+                        val position = fromDb.find {
+                            it.currencyCode == apiRate.currencyCode
+                        }?.positionInList ?: -1
+                        apiRate.copy(positionInList = position)
                     }
                 }
-                .map { it.toDomainRates() }
-                .map { rates ->
-                    if (rates.isEmpty()) return@map rates
-                    val selectedRate = rates.find { it.currencyCode == currencyCode } ?: RateDomain(currencyCode, 1.0)
-                    rates.toMutableList().apply {
-                        removeAll { it.currencyCode == currencyCode }
-                        add(0, selectedRate)
-                    }
+            )
+            .subscribeOn(Schedulers.io())
+            .onErrorResumeNext {
+                when (it) {
+                    is SocketTimeoutException -> getRatesFromDb()
+                    is UnknownHostException -> getRatesFromDb()
+                    is HttpException -> getRatesFromDb()
+                    else -> Single.error(it)
                 }
+            }
+            .map { it.toDomainRates() }
+            .map { rates ->
+                if (rates.isEmpty()) return@map rates
+                val selectedRate =
+                    rates.find { it.currencyCode == currencyCode } ?: RateDomain(currencyCode, 1.0)
+                rates.toMutableList().apply {
+                    removeAll { it.currencyCode == currencyCode }
+                    add(0, selectedRate)
+                }
+            }
     }
 
-    private fun getRatesFromDb() =
-            ratesLocalDataSource.getRates()
-                    .subscribeOn(Schedulers.io())
+    private fun getRatesFromDb(): Single<List<Rate>> {
+        return ratesLocalDataSource.getRates()
+            .subscribeOn(Schedulers.io())
+    }
 
-    private fun getRatesFromApi(currencyCode: String) =
-            api.getLatestRates(currencyCode)
-                    .subscribeOn(Schedulers.io())
-                    .map { it.copy(currencies = it.currencies.toSortedMap()) }
-                    .doOnSuccess { ratesLocalDataSource.upsert(it.toDbRates()) }
-                    .map { it.toDbRates() }
+    private fun getRatesFromApi(currencyCode: String): Single<List<Rate>> {
+        return api.getLatestRates(currencyCode)
+            .subscribeOn(Schedulers.io())
+            .map { it.copy(currencies = it.currencies.toSortedMap()) }
+            .map { it.toDbRates() }
+            .doOnSuccess { ratesLocalDataSource.upsert(it) }
+    }
 
     fun getSavedAmount() = preferences.amount
 
@@ -79,7 +82,7 @@ class RatesRepository @Inject constructor(
 
 private fun List<Rate>.toDomainRates(): List<RateDomain> {
     return sortedWith(DbRatesComparator)
-            .map { RateDomain(it.currencyCode, it.rate) }
+        .map { RateDomain(it.currencyCode, it.rate) }
 }
 
 private fun RatesList.toDbRates() = currencies.map { Rate(it.key, it.value) }

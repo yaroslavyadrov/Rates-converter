@@ -27,6 +27,11 @@ class RatesActivity : BaseActivity(), RatesMvpView {
         ratesRecyclerView.layoutManager = LinearLayoutManager(this)
         ratesRecyclerView.adapter = adapter
         presenter.onScreenOpen()
+        ratesRecyclerView.setHasFixedSize(true)
+        adapter.onAmountChanged { presenter.onAmountChanged(it) }
+        adapter.onRateItemClick { currencyCode, amount ->
+            presenter.onRateItemClick(currencyCode, amount)
+        }
     }
 
     override fun onDestroy() {
@@ -34,7 +39,7 @@ class RatesActivity : BaseActivity(), RatesMvpView {
         super.onDestroy()
     }
 
-    override fun showRatesLst(list: List<RateItem>) {
+    override fun showRatesList(list: List<RateItem>) {
         adapter.submitList(list)
     }
 }

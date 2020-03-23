@@ -4,5 +4,5 @@ import revolut.converter.presentation.model.RateItem
 import revolut.converter.presentation.ui.base.MvpView
 
 interface RatesMvpView : MvpView {
-    fun showRatesLst(list: List<RateItem>)
+    fun showRatesList(list: List<RateItem>)
 }
