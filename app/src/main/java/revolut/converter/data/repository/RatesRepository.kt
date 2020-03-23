@@ -42,7 +42,7 @@ class RatesRepository @Inject constructor(
                     else -> Single.error(it)
                 }
             }
-            .map { it.toDomainRates() }
+            .map(List<Rate>::toDomainRates)
             .map { rates ->
                 if (rates.isEmpty()) return@map rates
                 val selectedRate =
@@ -52,6 +52,12 @@ class RatesRepository @Inject constructor(
                     add(0, selectedRate)
                 }
             }
+            .doOnSuccess {
+                it.forEachIndexed { index, rateDomain ->
+                    ratesLocalDataSource.updatePosition(rateDomain.currencyCode, index)
+                }
+            }
+
     }
 
     private fun getRatesFromDb(): Single<List<Rate>> {
@@ -63,7 +69,7 @@ class RatesRepository @Inject constructor(
         return api.getLatestRates(currencyCode)
             .subscribeOn(Schedulers.io())
             .map { it.copy(currencies = it.currencies.toSortedMap()) }
-            .map { it.toDbRates() }
+            .map(RatesList::toDbRates)
             .doOnSuccess { ratesLocalDataSource.upsert(it) }
     }
 

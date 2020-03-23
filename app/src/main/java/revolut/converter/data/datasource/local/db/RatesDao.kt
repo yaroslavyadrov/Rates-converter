@@ -1,12 +1,6 @@
 package revolut.converter.data.datasource.local.db
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.Transaction
-import androidx.room.Update
-import io.reactivex.Completable
+import androidx.room.*
 import io.reactivex.Single
 
 @Dao
@@ -15,7 +9,7 @@ interface RatesDao {
     fun getRates(): Single<List<Rate>>
 
     @Query("UPDATE rates SET position_in_list = :position WHERE currency_code = :currencyCode")
-    fun updatePosition(currencyCode: String, position: Int): Completable
+    fun updatePosition(currencyCode: String, position: Int)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(rates: List<Rate>): List<Long>
@@ -26,9 +20,9 @@ interface RatesDao {
     @Transaction
     fun upsert(rates: List<Rate>) {
         val rowIDs = insert(rates)
-        val weeksToUpdate = rowIDs.mapIndexedNotNull { index, rowID ->
-            if (rowID == -1L) null else rates[index]
+        val ratesToUpdate = rowIDs.mapIndexedNotNull { index, rowID ->
+            if (rowID == -1L) rates[index] else null
         }
-        weeksToUpdate.forEach { update(RateUpdate(it.currencyCode, it.rate)) }
+        ratesToUpdate.forEach { update(RateUpdate(it.currencyCode, it.rate)) }
     }
 }
