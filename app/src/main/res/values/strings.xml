@@ -2,4 +2,5 @@
     <string name="app_name">Revolut converter</string>
     <string name="error">Error occurred.\nPlease try again later</string>
     <string name="retry">retry</string>
+    <string name="rates_title">Rates</string>
 </resources>
