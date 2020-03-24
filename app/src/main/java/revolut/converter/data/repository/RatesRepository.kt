@@ -3,15 +3,12 @@ package revolut.converter.data.repository
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
-import retrofit2.HttpException
 import revolut.converter.data.datasource.local.db.Rate
 import revolut.converter.data.datasource.local.db.RatesDao
 import revolut.converter.data.datasource.local.preferences.PreferencesHelper
 import revolut.converter.data.datasource.remote.RatesApi
 import revolut.converter.data.datasource.remote.model.RatesList
 import revolut.converter.domain.model.RateDomain
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 import javax.inject.Inject
 
 class RatesRepository @Inject constructor(
@@ -34,14 +31,6 @@ class RatesRepository @Inject constructor(
                 }
             )
             .subscribeOn(Schedulers.io())
-            .onErrorResumeNext {
-                when (it) {
-                    is SocketTimeoutException -> getRatesFromDb()
-                    is UnknownHostException -> getRatesFromDb()
-                    is HttpException -> getRatesFromDb()
-                    else -> Single.error(it)
-                }
-            }
             .map(List<Rate>::toDomainRates)
             .map { rates ->
                 if (rates.isEmpty()) return@map rates

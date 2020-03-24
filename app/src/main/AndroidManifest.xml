@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="revolut.converter">
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -11,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:name=".RatesApp"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:allowBackup">
         <activity android:name="revolut.converter.presentation.ui.rates.RatesActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

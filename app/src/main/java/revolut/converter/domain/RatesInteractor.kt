@@ -25,8 +25,7 @@ class RatesInteractor @Inject constructor(private val ratesRepository: RatesRepo
     fun observeRatesData(): Observable<List<RatePresentation>> {
         return Observable.combineLatest(
                 timer,
-                selectedCurrencyRelay.distinctUntilChanged()
-                    .debounce(200, TimeUnit.MILLISECONDS),
+                selectedCurrencyRelay.distinctUntilChanged(),
                 BiFunction<Long, RatePresentation, RatePresentation> { _, rate ->
                     rate
                 }
