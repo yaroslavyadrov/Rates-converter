@@ -2,7 +2,6 @@ package revolut.converter.domain
 
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
-import io.reactivex.functions.BiFunction
 import revolut.converter.data.repository.RatesRepository
 import revolut.converter.domain.model.RateDomain
 import revolut.converter.presentation.model.RatePresentation
@@ -20,33 +19,33 @@ class RatesInteractor @Inject constructor(private val ratesRepository: RatesRepo
         )
     )
 
-    private val timer = Observable.interval(1, TimeUnit.SECONDS)
-
     fun observeRatesData(): Observable<List<RatePresentation>> {
-        return Observable.combineLatest(
-                timer,
-                selectedCurrencyRelay.distinctUntilChanged(),
-                BiFunction<Long, RatePresentation, RatePresentation> { _, rate ->
-                    rate
-                }
-            )
+        return selectedCurrencyRelay
+            .switchMap(this::getRateUpdates)
+    }
+
+    private fun getRateUpdates(selectedCurrency: RatePresentation) =
+        Observable
+            .interval(0, 1, TimeUnit.SECONDS)
+            .map { selectedCurrency }
             .switchMap { (currency, amount) ->
                 ratesRepository.getRates(currency)
                     .map { it.toPresentation(amount.toDouble()) }
                     .toObservable()
             }
-    }
+            .doOnNext {
+                ratesRepository.saveAmount(selectedCurrency.amount.toDouble())
+                ratesRepository.saveSelectedCurrencyCode(selectedCurrency.currencyCode)
+            }
 
     fun newAmount(amount: String) {
         val changedRate =
-            selectedCurrencyRelay.value?.copy(amount = amount) ?: throw Exception("dsf")
-        ratesRepository.saveAmount(amount.toDouble())
+            selectedCurrencyRelay.value?.copy(amount = amount)
+                ?: throw RuntimeException("Selected currency relay value is null")
         selectedCurrencyRelay.accept(changedRate)
     }
 
     fun newCurrencySelectedAsBasic(currencyCode: String, amount: String) {
-        ratesRepository.saveAmount(amount.toDouble())
-        ratesRepository.saveSelectedCurrencyCode(currencyCode)
         selectedCurrencyRelay.accept(RatePresentation(currencyCode, amount))
     }
 
@@ -65,7 +64,7 @@ class RatesInteractor @Inject constructor(private val ratesRepository: RatesRepo
                     }
                 }
                 .toPlainString()
-            if (result == "0.00") {//because of java7 BigDecimal bug
+            if (result == "0.00") {//because of Java7 BigDecimal bug
                 RatePresentation(it.currencyCode, "0")
             } else {
                 RatePresentation(it.currencyCode, result)
