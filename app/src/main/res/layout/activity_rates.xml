@@ -8,16 +8,12 @@
     android:focusableInTouchMode="true"
     tools:context=".presentation.ui.rates.RatesActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
-        app:titleTextColor="@color/black"
-        app:title="@string/rates_title"
-        android:paddingStart="68dp"
+    <include
+        android:id="@+id/include"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        layout="@layout/view_appbar_with_toolbar"/>
 
     <revolut.converter.presentation.util.KeyboardDismissingRecyclerView
         android:id="@+id/ratesRecyclerView"
@@ -26,7 +22,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/include" />
 
     <ProgressBar
         android:id="@+id/progressBar"

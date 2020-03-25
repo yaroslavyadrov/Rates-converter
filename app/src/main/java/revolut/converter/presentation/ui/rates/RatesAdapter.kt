@@ -21,7 +21,7 @@ import revolut.converter.util.bindView
 import javax.inject.Inject
 
 class RatesAdapter @Inject constructor(ratesItemDiffCallback: RatesItemDiffCallback) :
-    ListAdapter<RateItem, RatesAdapter.ViewHolder>(ratesItemDiffCallback) {
+        ListAdapter<RateItem, RatesAdapter.ViewHolder>(ratesItemDiffCallback) {
 
     private var amountChangedCallback: (String) -> Unit = {}
     private var rateClickCallback: (String, String) -> Unit = { _, _ -> }
@@ -32,7 +32,7 @@ class RatesAdapter @Inject constructor(ratesItemDiffCallback: RatesItemDiffCallb
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) =
-        holder.bind(getItem(position))
+            holder.bind(getItem(position))
 
     fun onAmountChanged(callback: (String) -> Unit) {
         amountChangedCallback = callback
@@ -73,16 +73,16 @@ class RatesAdapter @Inject constructor(ratesItemDiffCallback: RatesItemDiffCallb
                 rateClickCallback(rateItem.currencyCode, rateItem.amount)
             }
             currencyAmount.setTextColor(
-                ContextCompat.getColor(
-                    itemView.context,
-                    rateItem.textColor
-                )
+                    ContextCompat.getColor(
+                            itemView.context,
+                            rateItem.textColor
+                    )
             )
             Glide.with(itemView)
-                .load(rateItem.flagId)
-                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                .apply(RequestOptions.circleCropTransform())
-                .into(currencyFlag)
+                    .load(rateItem.flagId)
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(currencyFlag)
         }
     }
 

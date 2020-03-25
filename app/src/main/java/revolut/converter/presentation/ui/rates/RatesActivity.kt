@@ -2,6 +2,7 @@ package revolut.converter.presentation.ui.rates
 
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -11,9 +12,9 @@ import revolut.converter.presentation.ui.base.BaseActivity
 import revolut.converter.util.bindView
 import javax.inject.Inject
 
-
 class RatesActivity : BaseActivity(), RatesMvpView {
 
+    private val toolbar by bindView<Toolbar>(R.id.toolbar)
     private val ratesRecyclerView by bindView<RecyclerView>(R.id.ratesRecyclerView)
     private val progressBar by bindView<View>(R.id.progressBar)
     private val errorView by bindView<View>(R.id.errorView)
@@ -28,6 +29,7 @@ class RatesActivity : BaseActivity(), RatesMvpView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_rates)
+        toolbar.setTitle(R.string.rates_title)
         activityComponent?.inject(this)
         presenter.bind(this)
         (ratesRecyclerView.itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false

@@ -11,7 +11,7 @@ import revolut.converter.presentation.ui.base.BasePresenter
 import javax.inject.Inject
 
 class RatesPresenter @Inject constructor(
-    private val ratesInteractor: RatesInteractor
+        private val ratesInteractor: RatesInteractor
 ) : BasePresenter<RatesMvpView>() {
 
     var firstItemCode = ""
@@ -19,17 +19,17 @@ class RatesPresenter @Inject constructor(
     fun startObserveRates() {
         view?.showLoading()
         ratesInteractor.observeRatesData()
-            .observeOn(AndroidSchedulers.mainThread())
-            .map { it.toListItems() }
-            .subscribe(
-                {
-                    val needScrollToTop = it.first().currencyCode != firstItemCode
-                    firstItemCode = it.first().currencyCode
-                    view?.showRatesList(it, needScrollToTop)
-                },
-                { view?.showError() }
-            )
-            .addTo(disposables)
+                .observeOn(AndroidSchedulers.mainThread())
+                .map { it.toListItems() }
+                .subscribe(
+                        {
+                            val needScrollToTop = it.first().currencyCode != firstItemCode
+                            firstItemCode = it.first().currencyCode
+                            view?.showRatesList(it, needScrollToTop)
+                        },
+                        { view?.showError() }
+                )
+                .addTo(disposables)
     }
 
     fun onAmountChanged(newAmount: String) {

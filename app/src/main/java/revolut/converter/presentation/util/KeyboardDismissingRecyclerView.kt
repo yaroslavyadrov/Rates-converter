@@ -1,6 +1,5 @@
 package revolut.converter.presentation.util
 
-
 import android.content.Context
 import android.util.AttributeSet
 import android.view.inputmethod.InputMethodManager
@@ -8,17 +7,14 @@ import androidx.annotation.Nullable
 import androidx.recyclerview.widget.RecyclerView
 
 class KeyboardDismissingRecyclerView @JvmOverloads constructor(
-    context: Context,
-    @Nullable attrs: AttributeSet? = null,
-    defStyle: Int = -1
+        context: Context,
+        @Nullable attrs: AttributeSet? = null,
+        defStyle: Int = -1
 ) : RecyclerView(context, attrs, defStyle) {
 
     private var keyboardDismissingScrollListener: OnScrollListener = object : OnScrollListener() {
         var isKeyboardDismissedByScroll = false
-        override fun onScrollStateChanged(
-            recyclerView: RecyclerView,
-            state: Int
-        ) {
+        override fun onScrollStateChanged(recyclerView: RecyclerView, state: Int) {
             when (state) {
                 SCROLL_STATE_DRAGGING -> if (!isKeyboardDismissedByScroll) {
                     hideKeyboard()
@@ -31,7 +27,7 @@ class KeyboardDismissingRecyclerView @JvmOverloads constructor(
 
     private val inputMethodManager: InputMethodManager by lazy {
         context.getSystemService(
-            Context.INPUT_METHOD_SERVICE
+                Context.INPUT_METHOD_SERVICE
         ) as InputMethodManager
     }
 
