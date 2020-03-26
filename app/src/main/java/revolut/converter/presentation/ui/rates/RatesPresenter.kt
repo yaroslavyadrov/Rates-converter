@@ -14,7 +14,7 @@ class RatesPresenter @Inject constructor(
         private val ratesInteractor: RatesInteractor
 ) : BasePresenter<RatesMvpView>() {
 
-    var firstItemCode = ""
+    private var firstItemCode = ""
 
     fun startObserveRates() {
         view?.showLoading()
@@ -43,7 +43,6 @@ class RatesPresenter @Inject constructor(
     private fun List<RatePresentation>.toListItems(): List<RateItem> {
         return this.map {
             val currency = ExtendedCurrency.getCurrencyByISO(it.currencyCode)
-
             val textColor = if (it.amount == "0") {
                 R.color.gray
             } else {

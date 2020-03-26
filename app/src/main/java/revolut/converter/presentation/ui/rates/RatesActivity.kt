@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import revolut.converter.R
 import revolut.converter.presentation.model.RateItem
 import revolut.converter.presentation.ui.base.BaseActivity
-import revolut.converter.util.bindView
+import revolut.converter.presentation.util.bindView
 import javax.inject.Inject
 
 class RatesActivity : BaseActivity(), RatesMvpView {

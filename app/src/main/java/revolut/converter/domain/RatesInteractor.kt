@@ -20,18 +20,16 @@ class RatesInteractor @Inject constructor(private val ratesRepository: RatesRepo
     )
 
     fun observeRatesData(): Observable<List<RatePresentation>> {
-        return selectedCurrencyRelay
-                .switchMap(this::getRateUpdates)
+        return selectedCurrencyRelay.switchMap(this::getRateUpdates)
     }
 
     private fun getRateUpdates(selectedCurrency: RatePresentation) =
             Observable
                     .interval(0, 1, TimeUnit.SECONDS)
                     .map { selectedCurrency }
-                    .switchMap { (currency, amount) ->
+                    .switchMapSingle { (currency, amount) ->
                         ratesRepository.getRates(currency)
                                 .map { it.toPresentation(amount.toDouble()) }
-                                .toObservable()
                     }
                     .doOnNext {
                         ratesRepository.saveAmount(selectedCurrency.amount.toDouble())
