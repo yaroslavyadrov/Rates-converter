@@ -38,7 +38,11 @@ class BaseRateViewHolder(
             if (s.isNullOrEmpty()) {
                 amountChangedCallback("0")
             } else {
-                amountChangedCallback(s.toString())
+                if (s.length == 1 && !s[0].isDigit()) {
+                    amountChangedCallback("0")
+                } else {
+                    amountChangedCallback(s.toString())
+                }
             }
         }
     }
