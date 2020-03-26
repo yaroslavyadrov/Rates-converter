@@ -22,6 +22,17 @@ allprojects {
         jcenter()
         maven { url "https://jitpack.io" }
     }
+
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile)
+            .all {
+                kotlinOptions {
+                    freeCompilerArgs += [
+                            '-Xno-call-assertions',
+                            '-Xno-receiver-assertions',
+                            '-Xno-param-assertions'
+                    ]
+                }
+            }
 }
 
 task clean(type: Delete) {

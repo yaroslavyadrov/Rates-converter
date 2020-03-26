@@ -16,12 +16,41 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
+    signingConfigs {
         release {
+            File releaseSignFile = rootProject.file('release_keystore.properties')
+            Properties releaseSignProperties
+            if (releaseSignFile.exists()) {
+                releaseSignProperties = new Properties()
+                releaseSignProperties.load(new FileInputStream(releaseSignFile))
+            }
+            storeFile file('keystore/' + releaseSignProperties['keystore'])
+            storePassword releaseSignProperties['storePassword']
+            keyAlias releaseSignProperties['keyAlias']
+            keyPassword releaseSignProperties['keyPassword']
+        }
+
+        debug {
+            storeFile file('keystore/debug.keystore')
+            keyAlias 'androiddebugkey'
+            storePassword 'android'
+            keyPassword 'android'
+        }
+    }
+
+    buildTypes {
+        debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
     }
+
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
