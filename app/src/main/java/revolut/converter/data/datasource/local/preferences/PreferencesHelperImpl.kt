@@ -23,7 +23,7 @@ class PreferencesHelperImpl @Inject constructor(val prefs: SharedPreferences) : 
 }
 
 private fun SharedPreferences.Editor.putDouble(key: String, double: Double) =
-        putLong(key, java.lang.Double.doubleToRawLongBits(double))
+    putLong(key, java.lang.Double.doubleToRawLongBits(double))
 
 private fun SharedPreferences.getDouble(key: String, default: Double) =
-        java.lang.Double.longBitsToDouble(getLong(key, java.lang.Double.doubleToRawLongBits(default)))
+    java.lang.Double.longBitsToDouble(getLong(key, java.lang.Double.doubleToRawLongBits(default)))

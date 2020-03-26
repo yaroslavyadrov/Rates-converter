@@ -35,7 +35,6 @@ class RatesActivity : BaseActivity(), RatesMvpView {
         (ratesRecyclerView.itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
         ratesRecyclerView.layoutManager = LinearLayoutManager(this)
         ratesRecyclerView.adapter = adapter
-        presenter.startObserveRates()
         ratesRecyclerView.setHasFixedSize(true)
         adapter.onAmountChanged { presenter.onAmountChanged(it) }
         adapter.onRateItemClick { currencyCode, amount ->
@@ -44,6 +43,17 @@ class RatesActivity : BaseActivity(), RatesMvpView {
         retryButton.setOnClickListener {
             presenter.startObserveRates()
         }
+        presenter.onScreenOpen()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        presenter.startObserveRates()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        presenter.stopObserveRates()
     }
 
     override fun onDestroy() {

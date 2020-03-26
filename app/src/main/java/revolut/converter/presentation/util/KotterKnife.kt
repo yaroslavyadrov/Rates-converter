@@ -8,52 +8,52 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 public fun <V : View> View.bindView(id: Int)
-        : ReadOnlyProperty<View, V> = required(id, viewFinder)
+    : ReadOnlyProperty<View, V> = required(id, viewFinder)
 
 public fun <V : View> Activity.bindView(id: Int)
-        : ReadOnlyProperty<Activity, V> = required(id, viewFinder)
+    : ReadOnlyProperty<Activity, V> = required(id, viewFinder)
 
 public fun <V : View> Dialog.bindView(id: Int)
-        : ReadOnlyProperty<Dialog, V> = required(id, viewFinder)
+    : ReadOnlyProperty<Dialog, V> = required(id, viewFinder)
 
 public fun <V : View> RecyclerView.ViewHolder.bindView(id: Int)
-        : ReadOnlyProperty<RecyclerView.ViewHolder, V> = required(id, viewFinder)
+    : ReadOnlyProperty<RecyclerView.ViewHolder, V> = required(id, viewFinder)
 
 public fun <V : View> View.bindOptionalView(id: Int)
-        : ReadOnlyProperty<View, V?> = optional(id, viewFinder)
+    : ReadOnlyProperty<View, V?> = optional(id, viewFinder)
 
 public fun <V : View> Activity.bindOptionalView(id: Int)
-        : ReadOnlyProperty<Activity, V?> = optional(id, viewFinder)
+    : ReadOnlyProperty<Activity, V?> = optional(id, viewFinder)
 
 public fun <V : View> Dialog.bindOptionalView(id: Int)
-        : ReadOnlyProperty<Dialog, V?> = optional(id, viewFinder)
+    : ReadOnlyProperty<Dialog, V?> = optional(id, viewFinder)
 
 public fun <V : View> RecyclerView.ViewHolder.bindOptionalView(id: Int)
-        : ReadOnlyProperty<RecyclerView.ViewHolder, V?> = optional(id, viewFinder)
+    : ReadOnlyProperty<RecyclerView.ViewHolder, V?> = optional(id, viewFinder)
 
 public fun <V : View> View.bindViews(vararg ids: Int)
-        : ReadOnlyProperty<View, List<V>> = required(ids, viewFinder)
+    : ReadOnlyProperty<View, List<V>> = required(ids, viewFinder)
 
 public fun <V : View> Activity.bindViews(vararg ids: Int)
-        : ReadOnlyProperty<Activity, List<V>> = required(ids, viewFinder)
+    : ReadOnlyProperty<Activity, List<V>> = required(ids, viewFinder)
 
 public fun <V : View> Dialog.bindViews(vararg ids: Int)
-        : ReadOnlyProperty<Dialog, List<V>> = required(ids, viewFinder)
+    : ReadOnlyProperty<Dialog, List<V>> = required(ids, viewFinder)
 
 public fun <V : View> RecyclerView.ViewHolder.bindViews(vararg ids: Int)
-        : ReadOnlyProperty<RecyclerView.ViewHolder, List<V>> = required(ids, viewFinder)
+    : ReadOnlyProperty<RecyclerView.ViewHolder, List<V>> = required(ids, viewFinder)
 
 public fun <V : View> View.bindOptionalViews(vararg ids: Int)
-        : ReadOnlyProperty<View, List<V>> = optional(ids, viewFinder)
+    : ReadOnlyProperty<View, List<V>> = optional(ids, viewFinder)
 
 public fun <V : View> Activity.bindOptionalViews(vararg ids: Int)
-        : ReadOnlyProperty<Activity, List<V>> = optional(ids, viewFinder)
+    : ReadOnlyProperty<Activity, List<V>> = optional(ids, viewFinder)
 
 public fun <V : View> Dialog.bindOptionalViews(vararg ids: Int)
-        : ReadOnlyProperty<Dialog, List<V>> = optional(ids, viewFinder)
+    : ReadOnlyProperty<Dialog, List<V>> = optional(ids, viewFinder)
 
 public fun <V : View> RecyclerView.ViewHolder.bindOptionalViews(vararg ids: Int)
-        : ReadOnlyProperty<RecyclerView.ViewHolder, List<V>> = optional(ids, viewFinder)
+    : ReadOnlyProperty<RecyclerView.ViewHolder, List<V>> = optional(ids, viewFinder)
 
 private val View.viewFinder: View.(Int) -> View?
     get() = { findViewById(it) }
@@ -65,12 +65,12 @@ private val RecyclerView.ViewHolder.viewFinder: RecyclerView.ViewHolder.(Int) ->
     get() = { itemView.findViewById(it) }
 
 private fun viewNotFound(id: Int, desc: KProperty<*>): Nothing =
-        throw IllegalStateException("View ID $id for '${desc.name}' not found.")
+    throw IllegalStateException("View ID $id for '${desc.name}' not found.")
 
 @Suppress("UNCHECKED_CAST")
 private fun <T, V : View> required(id: Int, finder: T.(Int) -> View?) = Lazy { t: T, desc ->
     t.finder(id) as V?
-            ?: viewNotFound(id, desc)
+        ?: viewNotFound(id, desc)
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -80,7 +80,7 @@ private fun <T, V : View> optional(id: Int, finder: T.(Int) -> View?) = Lazy { t
 private fun <T, V : View> required(ids: IntArray, finder: T.(Int) -> View?) = Lazy { t: T, desc ->
     ids.map {
         t.finder(it) as V?
-                ?: viewNotFound(it, desc)
+            ?: viewNotFound(it, desc)
     }
 }
 

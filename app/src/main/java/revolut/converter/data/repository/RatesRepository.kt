@@ -12,54 +12,54 @@ import revolut.converter.domain.model.RateDomain
 import javax.inject.Inject
 
 class RatesRepository @Inject constructor(
-        private val api: RatesApi,
-        private val ratesLocalDataSource: RatesDao,
-        private val preferences: PreferencesHelper
+    private val api: RatesApi,
+    private val ratesLocalDataSource: RatesDao,
+    private val preferences: PreferencesHelper
 ) {
 
     fun getRates(currencyCode: String): Single<List<RateDomain>> {
         return Single.zip(
-                        getRatesFromDb(),
-                        getRatesFromApi(currencyCode),
-                        BiFunction<List<Rate>, List<Rate>, List<Rate>> { fromDb, fromApi ->
-                            fromApi.map { apiRate ->
-                                val position = fromDb.find {
-                                    it.currencyCode == apiRate.currencyCode
-                                }?.positionInList ?: -1
-                                apiRate.copy(positionInList = position)
-                            }
-                        }
-                )
-                .subscribeOn(Schedulers.io())
-                .map(List<Rate>::toDomainRates)
-                .map { rates ->
-                    if (rates.isEmpty()) return@map rates
-                    val selectedRate =
-                            rates.find { it.currencyCode == currencyCode }
-                                    ?: RateDomain(currencyCode, 1.0)
-                    rates.toMutableList().apply {
-                        removeAll { it.currencyCode == currencyCode }
-                        add(0, selectedRate)
+                getRatesFromDb(),
+                getRatesFromApi(currencyCode),
+                BiFunction<List<Rate>, List<Rate>, List<Rate>> { fromDb, fromApi ->
+                    fromApi.map { apiRate ->
+                        val position = fromDb.find {
+                            it.currencyCode == apiRate.currencyCode
+                        }?.positionInList ?: -1
+                        apiRate.copy(positionInList = position)
                     }
                 }
-                .doOnSuccess {
-                    it.forEachIndexed { index, rateDomain ->
-                        ratesLocalDataSource.updatePosition(rateDomain.currencyCode, index)
-                    }
+            )
+            .subscribeOn(Schedulers.io())
+            .map(List<Rate>::toDomainRates)
+            .map { rates ->
+                if (rates.isEmpty()) return@map rates
+                val selectedRate =
+                    rates.find { it.currencyCode == currencyCode }
+                        ?: RateDomain(currencyCode, 1.0)
+                rates.toMutableList().apply {
+                    removeAll { it.currencyCode == currencyCode }
+                    add(0, selectedRate)
                 }
+            }
+            .doOnSuccess {
+                it.forEachIndexed { index, rateDomain ->
+                    ratesLocalDataSource.updatePosition(rateDomain.currencyCode, index)
+                }
+            }
     }
 
     private fun getRatesFromDb(): Single<List<Rate>> {
         return ratesLocalDataSource.getRates()
-                .subscribeOn(Schedulers.io())
+            .subscribeOn(Schedulers.io())
     }
 
     private fun getRatesFromApi(currencyCode: String): Single<List<Rate>> {
         return api.getLatestRates(currencyCode)
-                .subscribeOn(Schedulers.io())
-                .map { it.copy(currencies = it.currencies.toSortedMap()) }
-                .map(RatesList::toDbRates)
-                .doOnSuccess { ratesLocalDataSource.upsert(it) }
+            .subscribeOn(Schedulers.io())
+            .map { it.copy(currencies = it.currencies.toSortedMap()) }
+            .map(RatesList::toDbRates)
+            .doOnSuccess { ratesLocalDataSource.upsert(it) }
     }
 
     fun getSavedAmount() = preferences.amount
@@ -77,7 +77,7 @@ class RatesRepository @Inject constructor(
 
 private fun List<Rate>.toDomainRates(): List<RateDomain> {
     return sortedWith(DbRatesComparator)
-            .map { RateDomain(it.currencyCode, it.rate) }
+        .map { RateDomain(it.currencyCode, it.rate) }
 }
 
 private fun RatesList.toDbRates() = currencies.map { Rate(it.key, it.value) }

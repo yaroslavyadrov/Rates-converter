@@ -17,8 +17,8 @@ class RatesApp : Application() {
 
     private fun initDagger() {
         appComponent = DaggerAppComponent.builder()
-                .networkModule(NetworkModule())
-                .localDataModule(LocalDataModule(this))
-                .build()
+            .networkModule(NetworkModule())
+            .localDataModule(LocalDataModule(this))
+            .build()
     }
 }

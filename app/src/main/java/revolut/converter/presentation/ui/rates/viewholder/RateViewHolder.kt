@@ -1,5 +1,9 @@
 package revolut.converter.presentation.ui.rates.viewholder
 
+import android.text.Editable
+import android.text.Spannable
+import android.text.TextWatcher
+import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -26,6 +30,35 @@ abstract class RateViewHolder(
 
     protected abstract fun doViewTypeSpecificLogic(rateItem: RateItem)
 
+    private val stylingTextWatcher: TextWatcher = object : TextWatcher {
+        private val grayColor = ContextCompat.getColor(itemView.context, R.color.gray)
+        private val blackColor = ContextCompat.getColor(itemView.context, R.color.black)
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        }
+
+        override fun afterTextChanged(s: Editable?) {
+            val textColor = if (!s.isNullOrEmpty() && s.toString().toDoubleOrNull() == 0.0) {
+                grayColor
+            } else {
+                blackColor
+            }
+            s?.setSpan(
+                ForegroundColorSpan(textColor),
+                0,
+                s.length,
+                Spannable.SPAN_EXCLUSIVE_INCLUSIVE
+            )
+        }
+    }
+
+    init {
+        currencyAmount.addTextChangedListener(stylingTextWatcher)
+    }
+
     fun bind(rateItem: RateItem) {
         doViewTypeSpecificLogic(rateItem)
         currencyAmount.setOnFocusChangeListener { _, hasFocus ->
@@ -33,12 +66,6 @@ abstract class RateViewHolder(
                 rateClickCallback(rateItem.currencyCode, rateItem.amount)
             }
         }
-        currencyAmount.setTextColor(
-            ContextCompat.getColor(
-                itemView.context,
-                rateItem.textColor
-            )
-        )
         currencyCode.text = rateItem.currencyCode
         currencyName.text = rateItem.currencyName
         rateItemLayout.setOnClickListener {
