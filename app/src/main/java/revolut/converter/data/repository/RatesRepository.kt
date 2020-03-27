@@ -1,8 +1,10 @@
 package revolut.converter.data.repository
 
+import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
+import revolut.converter.data.datasource.local.db.PositionUpdate
 import revolut.converter.data.datasource.local.db.Rate
 import revolut.converter.data.datasource.local.db.RatesDao
 import revolut.converter.data.datasource.local.preferences.PreferencesHelper
@@ -27,26 +29,16 @@ class RatesRepository @Inject constructor(
                             it.currencyCode == apiRate.currencyCode
                         }?.positionInList ?: -1
                         apiRate.copy(positionInList = position)
+                    }.toMutableList().apply {
+                        val selectedRate = Rate(currencyCode, 1.0, 0)
+                        ratesLocalDataSource.insert(selectedRate)
+                        removeAll { it.currencyCode == currencyCode }
+                        add(0, selectedRate)
                     }
                 }
             )
             .subscribeOn(Schedulers.io())
             .map(List<Rate>::toDomainRates)
-            .map { rates ->
-                if (rates.isEmpty()) return@map rates
-                val selectedRate =
-                    rates.find { it.currencyCode == currencyCode }
-                        ?: RateDomain(currencyCode, 1.0)
-                rates.toMutableList().apply {
-                    removeAll { it.currencyCode == currencyCode }
-                    add(0, selectedRate)
-                }
-            }
-            .doOnSuccess {
-                it.forEachIndexed { index, rateDomain ->
-                    ratesLocalDataSource.updatePosition(rateDomain.currencyCode, index)
-                }
-            }
     }
 
     private fun getRatesFromDb(): Single<List<Rate>> {
@@ -72,6 +64,21 @@ class RatesRepository @Inject constructor(
 
     fun saveSelectedCurrencyCode(currencyCode: String) {
         preferences.currencyCode = currencyCode
+    }
+
+    fun updateRatesPositions(indexes: List<Pair<String, Int>>) {
+        //fire and forget
+        Completable.fromCallable {
+                val updates = indexes.map { (currencyCode, position) ->
+                    PositionUpdate(
+                        currencyCode,
+                        position
+                    )
+                }
+                ratesLocalDataSource.updatePositions(updates)
+            }
+            .subscribeOn(Schedulers.io())
+            .subscribe()
     }
 }
 

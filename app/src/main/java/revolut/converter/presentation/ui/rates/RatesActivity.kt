@@ -67,7 +67,7 @@ class RatesActivity : BaseActivity(), RatesMvpView {
         errorView.visibility = View.GONE
         adapter.submitList(list) {
             if (needScrollToTop) {
-                ratesRecyclerView.scrollToPosition(0)
+                ratesRecyclerView.smoothScrollToPosition(0)
             }
         }
     }

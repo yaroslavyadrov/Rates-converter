@@ -27,6 +27,9 @@ class RatesPresenter @Inject constructor(
             .subscribe(
                 {
                     val needScrollToTop = it.first().currencyCode != firstItemCode
+                    if (needScrollToTop) {
+                        ratesInteractor.onListOrderChanged(it)
+                    }
                     firstItemCode = it.first().currencyCode
                     view?.showRatesList(it, needScrollToTop)
                 },

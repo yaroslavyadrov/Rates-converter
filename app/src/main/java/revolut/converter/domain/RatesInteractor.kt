@@ -1,9 +1,12 @@
 package revolut.converter.domain
 
 import com.jakewharton.rxrelay2.BehaviorRelay
+import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import revolut.converter.data.repository.RatesRepository
 import revolut.converter.domain.model.RateDomain
+import revolut.converter.presentation.model.RateItem
 import revolut.converter.presentation.model.RatePresentation
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -45,6 +48,13 @@ class RatesInteractor @Inject constructor(private val ratesRepository: RatesRepo
 
     fun newCurrencySelectedAsBasic(currencyCode: String, amount: String) {
         selectedCurrencyRelay.accept(RatePresentation(currencyCode, amount))
+    }
+
+    fun onListOrderChanged(list: List<RateItem>) {
+        val indexes = list.mapIndexed { index, rateItem ->
+            rateItem.currencyCode to index
+        }
+        ratesRepository.updateRatesPositions(indexes)
     }
 
     private fun List<RateDomain>.toPresentation(amount: Double): List<RatePresentation> {
