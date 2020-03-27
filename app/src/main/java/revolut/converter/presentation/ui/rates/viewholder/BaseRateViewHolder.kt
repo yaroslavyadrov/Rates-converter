@@ -4,12 +4,15 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import revolut.converter.presentation.model.RateItem
+import revolut.converter.presentation.util.RegexMaskTextWatcher
 
 class BaseRateViewHolder(
     itemView: View,
     rateClickCallback: (String, String) -> Unit,
     private val amountChangedCallback: (String) -> Unit
 ) : RateViewHolder(itemView, rateClickCallback) {
+
+    private val amountRegex = "^(?:0|(?:0[1-9]*)|[1-9][0-9]*)((?:\\.)|(?:\\.\\d{1,2}))?\$"
 
     private var baseCursorPosition = 0
 
@@ -49,6 +52,7 @@ class BaseRateViewHolder(
 
     init {
         currencyAmount.addTextChangedListener(amountTextWatcher)
+        currencyAmount.addTextChangedListener(RegexMaskTextWatcher(amountRegex))
     }
 
     override fun doViewTypeSpecificLogic(rateItem: RateItem) {

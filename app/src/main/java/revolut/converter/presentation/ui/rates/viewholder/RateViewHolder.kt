@@ -1,6 +1,7 @@
 package revolut.converter.presentation.ui.rates.viewholder
 
 import android.text.Editable
+import android.text.InputFilter
 import android.text.Spannable
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
@@ -15,7 +16,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import revolut.converter.R
 import revolut.converter.presentation.model.RateItem
+import revolut.converter.presentation.util.RegexMaskTextWatcher
 import revolut.converter.presentation.util.bindView
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 abstract class RateViewHolder(
     itemView: View,
